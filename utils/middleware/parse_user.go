@@ -6,13 +6,7 @@ import (
 	"github.com/jonashiltl/sessions-backend/packages/types"
 )
 
-func ParseUser(c *fiber.Ctx) types.JwtPayload {
-	user, ok := c.Locals("user").(*jwt.Token)
-	if !ok {
-		return types.JwtPayload{}
-	}
-	claims := user.Claims.(jwt.MapClaims)
-
+func ParseMapClaims(claims jwt.MapClaims) types.JwtPayload {
 	payload := types.JwtPayload{}
 
 	if iss, ok := claims["iss"].(string); ok {
@@ -38,6 +32,18 @@ func ParseUser(c *fiber.Ctx) types.JwtPayload {
 	if eVerified, ok := claims["emailVerified"].(bool); ok {
 		payload.EmailVerified = eVerified
 	}
+
+	return payload
+}
+
+func ParseUser(c *fiber.Ctx) types.JwtPayload {
+	user, ok := c.Locals("user").(*jwt.Token)
+	if !ok {
+		return types.JwtPayload{}
+	}
+	claims := user.Claims.(jwt.MapClaims)
+
+	payload := ParseMapClaims(claims)
 
 	return payload
 }
