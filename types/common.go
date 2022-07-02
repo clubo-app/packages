@@ -13,11 +13,3 @@ type AccessTokenPayload struct {
 	EmailVerified bool     `json:"emailVerified"`
 	Provider      Provider `json:"provider"`
 }
-
-type RefreshTokenPayload struct {
-	Iss        string  `json:"iss"`
-	Sub        string  `json:"sub"`
-	Iat        float64 `json:"iat"`
-	Exp        int64   `json:"exp"`
-	Generation int16   `json:"generation"`
-}
