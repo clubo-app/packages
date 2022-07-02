@@ -1,9 +1,9 @@
 package middleware
 
 import (
+	"github.com/clubo-app/packages/types"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/jonashiltl/sessions-backend/packages/types"
 )
 
 func ParseMapClaims(claims jwt.MapClaims) types.JwtPayload {
