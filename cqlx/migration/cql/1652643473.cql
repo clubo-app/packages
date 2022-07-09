@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS friend_relations (
     requested_at timestamp,
     accepted_at timestamp,
     PRIMARY KEY (user_id, friend_id)
-);
+) WITH cdc = {'enabled':true};
 
 CREATE INDEX ON friend_relations((user_id), accepted);
