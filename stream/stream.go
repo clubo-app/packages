@@ -11,35 +11,35 @@ import (
 	"github.com/nats-io/nats.go/encoders/protobuf"
 )
 
-type stream struct {
+type Stream struct {
 	Nats *nats.EncodedConn
 }
 
-func new(nc *nats.EncodedConn) stream {
-	return stream{Nats: nc}
+func new(nc *nats.EncodedConn) Stream {
+	return Stream{Nats: nc}
 }
 
-func Connect(cluster string, opts []nats.Option) (stream, error) {
+func Connect(cluster string, opts []nats.Option) (Stream, error) {
 	opts = setupConnOptions(opts)
 
 	nc, err := nats.Connect(cluster, opts...)
 	if err != nil {
-		return stream{}, err
+		return Stream{}, err
 	}
 	c, err := nats.NewEncodedConn(nc, protobuf.PROTOBUF_ENCODER)
 	if err != nil {
-		return stream{}, err
+		return Stream{}, err
 	}
 	log.Println("Connected to Nats Server at ", c.Conn.ConnectedUrl())
 	return new(c), nil
 }
 
-func (s stream) PublishEvent(event any) error {
+func (s Stream) PublishEvent(event any) error {
 	sub := eventToSubject(event)
 	return s.Nats.Publish(sub, event)
 }
 
-func (s stream) SubscribeToEvent(queue string, event any, handler nats.Handler) (*nats.Subscription, error) {
+func (s Stream) SubscribeToEvent(queue string, event any, handler nats.Handler) (*nats.Subscription, error) {
 	sub := eventToSubject(event)
 
 	return s.Nats.QueueSubscribe(sub, queue, handler)
