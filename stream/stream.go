@@ -12,16 +12,11 @@ import (
 )
 
 type stream struct {
-	nats *nats.EncodedConn
+	Nats *nats.EncodedConn
 }
 
-type Stream interface {
-	PublishEvent(event any) error
-	SubscribeToEvent(queue string, event any, handler nats.Handler) (*nats.Subscription, error)
-}
-
-func New(nats *nats.EncodedConn) Stream {
-	return &stream{nats: nats}
+func New(nc *nats.EncodedConn) stream {
+	return stream{Nats: nc}
 }
 
 func Connect(cluster string, opts []nats.Option) (*nats.EncodedConn, error) {
@@ -41,13 +36,13 @@ func Connect(cluster string, opts []nats.Option) (*nats.EncodedConn, error) {
 
 func (s stream) PublishEvent(event any) error {
 	sub := eventToSubject(event)
-	return s.nats.Publish(sub, event)
+	return s.Nats.Publish(sub, event)
 }
 
 func (s stream) SubscribeToEvent(queue string, event any, handler nats.Handler) (*nats.Subscription, error) {
 	sub := eventToSubject(event)
 
-	return s.nats.QueueSubscribe(sub, queue, handler)
+	return s.Nats.QueueSubscribe(sub, queue, handler)
 }
 
 func setupConnOptions(opts []nats.Option) []nats.Option {
