@@ -15,23 +15,23 @@ type stream struct {
 	Nats *nats.EncodedConn
 }
 
-func New(nc *nats.EncodedConn) stream {
+func new(nc *nats.EncodedConn) stream {
 	return stream{Nats: nc}
 }
 
-func Connect(cluster string, opts []nats.Option) (*nats.EncodedConn, error) {
+func Connect(cluster string, opts []nats.Option) (stream, error) {
 	opts = setupConnOptions(opts)
 
 	nc, err := nats.Connect(cluster, opts...)
 	if err != nil {
-		return nil, err
+		return stream{}, err
 	}
 	c, err := nats.NewEncodedConn(nc, protobuf.PROTOBUF_ENCODER)
 	if err != nil {
-		return nil, err
+		return stream{}, err
 	}
 	log.Println("Connected to Nats Server at ", c.Conn.ConnectedUrl())
-	return c, nil
+	return new(c), nil
 }
 
 func (s stream) PublishEvent(event any) error {
